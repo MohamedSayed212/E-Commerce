@@ -20,5 +20,4 @@ yarn-error.log*
 # editor
 .vscode
 # Extra
-.todo
-.text
+Extra/
