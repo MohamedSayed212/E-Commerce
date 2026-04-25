@@ -1,16 +1,37 @@
-# React + Vite
+# 🛒 E-Commerce React App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive E-Commerce web application built with **React**, **Vite**, and **Tailwind CSS**.
 
-Currently, two official plugins are available:
+The app fetches product data from the **DummyJSON API** and provides a smooth shopping experience with category-based product browsing, live search, product details, cart management, favourites, and authentication pages.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Features
 
-## React Compiler
+- Fetch products from DummyJSON API
+- Browse products by category
+- Display category-based product sliders
+- Live product search with suggestions
+- Product details page with images, price, rating, brand, warranty, reviews, and similar products
+- Add/remove products from cart
+- Cart sidebar with quantity controls and total price calculation
+- Add/remove products from favourites
+- Login and signup UI
+- Responsive layout for desktop, tablet, and mobile
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+- React
+- Vite
+- Tailwind CSS
+- React Router
+- Context API
+- DummyJSON API
+- JavaScript ES6+
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🧠 What I practiced
+
+- Fetching API data with `fetch`
+- Using `useEffect` and `useState`
+- Handling multiple API requests with `Promise.all`
+- Managing global state using React Context
+- Building reusable components
+- Creating responsive UI with Tailwind CSS

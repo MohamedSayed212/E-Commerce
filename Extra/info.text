@@ -1,10 +1,234 @@
-Colors{
-    White: #FFFFFF
-    Black: #111111
-    Gray: #6B7280
-    Accent: #3B82F6 (blue)
-}
+Repository ==> project on cloud manged by git 
+1. Core Git concepts
+
+Know these well:
+
+Repository: project tracked by Git. /  Done 
 
 
 
- 
+
+Commit: saved snapshot of your code.//
+
+Branch: separate line of work.
+
+Get a verison of all app to work with ur self in some thing then 
+Do a pull request 
+
+if applied ==> merge ur branch with main branch 
+
+
+Merge: combine branches.
+
+
+
+Pull: get latest changes.  ==> from git hub 
+
+becuase if any one in ur team push code to main branch ur project will be out dated
+so u need to write git pull 
+
+
+
+
+Push: upload your commits.
+Remote: GitHub version of the repo.
+Pull Request / PR: request to merge your branch into main/dev.
+Conflict: Git cannot automatically combine changes.
+2. Daily commands
+git status
+
+Check what changed.
+
+git add .
+git commit -m "Add login form"
+
+Save your changes.
+
+git pull 
+#################
+
+
+Get latest code.
+
+git push
+
+Upload your code.
+
+git log --oneline
+
+See commit history.
+
+3. Branch workflow
+
+Create a branch:
+
+git checkout -b feature/navbar
+
+Switch branches:
+
+git checkout main
+git checkout feature/navbar
+
+Modern alternative:
+
+git switch main
+git switch -c feature/navbar
+
+Update your branch from main:
+
+git checkout main
+git pull
+git checkout feature/navbar
+git merge main
+4. Typical React task workflow
+git checkout main
+git pull
+git checkout -b feature/add-user-card
+npm install
+npm run dev
+
+After coding:
+
+git status
+git add .
+git commit -m "Add user card component"
+git push -u origin feature/add-user-card
+
+Then open a Pull Request on GitHub.
+
+5. Good commit messages
+
+Use clear, simple messages:
+
+git commit -m "Fix navbar mobile layout"
+git commit -m "Add product card component"
+git commit -m "Refactor auth form validation"
+
+Avoid:
+
+git commit -m "changes"
+git commit -m "fix"
+git commit -m "stuff"
+6. Pull requests
+
+A good PR should include:
+
+What changed
+Why it changed
+Screenshots for UI changes
+Testing notes
+
+Example:
+
+## What changed
+Added responsive navbar for mobile and desktop.
+
+## Why
+Needed for the new landing page layout.
+
+## Testing
+Tested on Chrome at desktop and mobile widths.
+7. Handling conflicts
+
+When Git shows conflict markers:
+
+<<<<<<< HEAD
+old code
+=======
+new code
+>>>>>>> feature-branch
+
+Edit the file manually, keep the correct code, then:
+
+git add .
+git commit
+8. Undo commands you should know
+
+Undo unstaged file changes:
+
+git checkout -- src/App.jsx
+
+Modern:
+
+git restore src/App.jsx
+
+Unstage a file:
+
+git restore --staged src/App.jsx
+
+Change last commit message:
+
+git commit --amend -m "Better commit message"
+
+Delete local branch:
+
+git branch -d feature/navbar
+9. GitHub things to know
+
+You should be comfortable with:
+
+Creating PRs
+Reviewing PR comments
+Requesting reviews
+Resolving conversations
+Reading GitHub Actions checks
+Viewing commit history
+Using Issues
+Linking PRs to Issues
+Reading README files
+Cloning repos
+Forking repos, if needed
+10. Important files
+.gitignore
+
+For React projects, usually ignore:
+
+node_modules
+dist
+.env
+.env.local
+.DS_Store
+
+Never commit:
+
+node_modules
+.env
+API keys
+passwords
+private tokens
+11. Most useful Git commands list
+git clone <repo-url>
+git status
+git add .
+git commit -m "message"
+git pull
+git push
+git checkout -b branch-name
+git checkout branch-name
+git merge branch-name
+git branch
+git branch -d branch-name
+git log --oneline
+git restore file-name
+git restore --staged file-name
+12. Junior developer habits
+
+Before starting work:
+
+git pull
+
+Before pushing:
+
+npm run lint
+npm test
+npm run build
+
+Before opening PR:
+
+Check your changed files.
+Remove console logs.
+Make sure the app runs.
+Write a clear PR description.
+Add screenshots for UI work.
+
+Learn these first and you’ll be ready for most junior React team workflows.
