@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Buttons from "./Buttons.jsx";
+import Product from "./ProductSlider/Product.jsx";
 import "swiper/css";
 import "swiper/css/navigation";
 import defaultPicture from "../assets/defaultPicture.webp";
@@ -138,14 +139,17 @@ function ProductDetails() {
         </h2>
 
         <Swiper
-          spaceBetween={15}
+          className="product-details-similar !pb-2"
+          modules={[Navigation]}
+          spaceBetween={12}
           navigation
           breakpoints={{
-            0: { slidesPerView: 2 },
+            0: { slidesPerView: 1.2 },
+            420: { slidesPerView: 2 },
             576: { slidesPerView: 2.5 },
             768: { slidesPerView: 3 },
             992: { slidesPerView: 4 },
-            1200: { slidesPerView: 4 },
+            1200: { slidesPerView: 5 },
             1400: { slidesPerView: 5 },
           }}
         >
@@ -153,25 +157,7 @@ function ProductDetails() {
             .filter((item) => item.id !== product.id)
             .map((item) => (
               <SwiperSlide key={item.id}>
-                <div className="rounded-xl bg-white p-4 shadow-md xs:h-[300px] transition hover:shadow-lg dark:bg-gray-900 dark:shadow-black/40">
-                  <Link to={`/products/${item.id}`} className="block w-full">
-                    <img
-                      src={item.thumbnail}
-                      alt={item.title}
-                      className="mb-1 xs:h-[120px] md:h-[120px] w-full object-contain hover:scale-105 duration-200"
-                    />
-                    <h3 className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-medium text-gray-900 dark:text-gray-100">
-                      {item.title}
-                    </h3>
-                  </Link>
-
-                  <p className="mt-1 font-bold text-primary">${item.price}</p>
-
-                  <div className=" xs:mt-[20px] md:mt-[30px] mb-[2px] ">
-                    {/* Same button behavior even for similar products */}
-                    <Buttons product={item} />
-                  </div>
-                </div>
+                <Product product={item} />
               </SwiperSlide>
             ))}
         </Swiper>
