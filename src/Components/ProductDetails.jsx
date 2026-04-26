@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Buttons from "./Buttons.jsx";
 import Product from "./ProductSlider/Product.jsx";
 import "swiper/css";
-import "swiper/css/navigation";
 import defaultPicture from "../assets/defaultPicture.webp";
 import RatingStars from "./RatingStars.jsx";
 
@@ -140,11 +138,9 @@ function ProductDetails() {
 
         <Swiper
           className="product-details-similar !pb-2"
-          modules={[Navigation]}
           spaceBetween={12}
-          navigation
           breakpoints={{
-            0: { slidesPerView: 1.2 },
+            0: { slidesPerView: 2 },
             420: { slidesPerView: 2 },
             576: { slidesPerView: 2.5 },
             768: { slidesPerView: 3 },
