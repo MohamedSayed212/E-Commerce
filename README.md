@@ -1,10 +1,10 @@
-# 🛒 E-Commerce React App
+#  E-Commerce React App
 
 A responsive E-Commerce web application built with **React**, **Vite**, and **Tailwind CSS**.
 
 The app fetches product data from the **DummyJSON API** and provides a smooth shopping experience with category-based product browsing, live search, product details, cart management, favourites, and authentication pages.
 
-## 🚀 Features
+##   Features
 
 - Fetch products from DummyJSON API
 - Browse products by category
@@ -17,7 +17,7 @@ The app fetches product data from the **DummyJSON API** and provides a smooth sh
 - Login and signup UI
 - Responsive layout for desktop, tablet, and mobile
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - React
 - Vite
@@ -27,7 +27,7 @@ The app fetches product data from the **DummyJSON API** and provides a smooth sh
 - DummyJSON API
 - JavaScript ES6+
 
-## 🧠 What I practiced
+##   What I practiced
 
 - Fetching API data with `fetch`
 - Using `useEffect` and `useState`
