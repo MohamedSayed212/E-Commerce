@@ -26,12 +26,14 @@ function Product({ product }) {
   };
 
   return (
-    <div className="relative mx-auto flex w-full max-w-[240px] flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:shadow-black/40">
+    <div className="relative mx-auto flex w-full max-w-[240px] flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition duration-200 hover:-translate-y-[1px] hover:shadow-md ">
       <button
         type="button"
         onClick={toggleFavourite}
-        className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white/95 shadow-sm transition duration-200 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900/95 dark:hover:bg-gray-800 md:hidden"
-        aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
+        className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white/95 shadow-sm transition duration-200 hover:bg-gray-100 md:hidden"
+        aria-label={
+          isFavourite ? "Remove from favourites" : "Add to favourites"
+        }
         aria-pressed={isFavourite}
       >
         {isFavourite ? (

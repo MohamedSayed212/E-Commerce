@@ -136,8 +136,7 @@ function Header() {
   }, [query]);
 
   const showSearchPanel = query.trim().length > 0;
-  // DummyJSON category endpoint may return either plain strings or objects.
-  // These helpers keep the UI safe for both response shapes.
+
   const getCategorySlug = (cat) =>
     typeof cat === "string" ? cat : cat?.slug || "";
   const getCategoryLabel = (cat) =>
@@ -145,7 +144,6 @@ function Header() {
 
   return (
     <header className="fixed left-0 top-0 z-50 w-full border-b border-transparent bg-white ">
-      {/* container on lg */}
       {/* all contnet div */}
       <div className="md:mx-auto ">
         {" "}
@@ -264,11 +262,11 @@ function Header() {
           {/* MOBILE SIDEBAR */}
           {menuOpen && (
             <div
-              className="md:hidden fixed inset-0 z-50 bg-black/25"
+              className="md:hidden  fixed inset-0 z-50 bg-black/1"
               onClick={() => setMenuOpen(false)}
             >
               <div
-                className="fixed top-[90px] left-0 flex h-[calc(100vh-90px)] w-[300px] flex-col overflow-y-auto bg-white p-4 shadow-lg dark:bg-gray-900 dark:text-gray-100"
+                className="fixed top-[60px]  left-0 flex h-[calc(100vh)] w-[300px] flex-col overflow-y-auto bg-white p-4 shadow-lg dark:bg-gray-900 dark:text-gray-100"
                 onClick={(e) => e.stopPropagation()}
               >
                 {NavLinks.map((item, index) => (
