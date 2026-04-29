@@ -127,7 +127,7 @@ function CartSideBar() {
           </div>
 
           <Link to="/cart" onClick={() => setIsCartOpen(false)}>
-            <button className=" xs:w-[150px]  md:w-[200px]   md:h-[50px] py-2 rounded-[10px]  xs:ml-[75px]  md:ml-[80px] bg-primary hover:bg-primaryHover text-white text-lg font-semibold transition">
+            <button className=" xs:w-[150px]  md:w-[200px]   md:h-[50px] py-2 rounded-[10px]  xs:ml-[60px] sm:ml-[65px]  md:ml-[75px]  bg-primary hover:bg-primaryHover text-white text-lg font-semibold transition">
               View Cart
             </button>
           </Link>
