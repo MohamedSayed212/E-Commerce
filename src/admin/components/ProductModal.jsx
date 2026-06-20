@@ -60,6 +60,8 @@ function Field({ label, error, children }) {
   );
 }
 
+const USD_TO_EGP = 50;
+
 export default function ProductModal({ product, categories, onClose, onSaved }) {
   const isEditing = Boolean(product);
 
@@ -77,8 +79,8 @@ export default function ProductModal({ product, categories, onClose, onSaved }) 
       setForm({
         name: product.name || "",
         description: product.description || "",
-        price: product.price ?? "",
-        compare_price: product.compare_price ?? "",
+        price: product.price != null ? product.price * USD_TO_EGP : "",
+        compare_price: product.compare_price != null ? product.compare_price * USD_TO_EGP : "",
         stock: product.stock ?? 0,
         category_id: product.category_id || "",
         is_active: product.is_active ?? true,
@@ -180,8 +182,8 @@ export default function ProductModal({ product, categories, onClose, onSaved }) 
         name: form.name.trim(),
         slug,
         description: form.description.trim(),
-        price: Number(form.price),
-        compare_price: form.compare_price !== "" ? Number(form.compare_price) : null,
+        price: Number(form.price) / USD_TO_EGP,
+        compare_price: form.compare_price !== "" ? Number(form.compare_price) / USD_TO_EGP : null,
         stock: Number(form.stock),
         category_id: form.category_id || null,
         images: finalUrls,
@@ -332,25 +334,25 @@ export default function ProductModal({ product, categories, onClose, onSaved }) 
 
           {/* ── Sale Price + Original Price ─────────────────────── */}
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Sale Price ($) *" error={errors.price}>
+            <Field label="Sale Price (EGP) *" error={errors.price}>
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 min="0"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
-                placeholder="0.00"
+                placeholder="0"
                 className={inputClass}
               />
             </Field>
-            <Field label="Original Price ($)">
+            <Field label="Original Price (EGP)">
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 min="0"
                 value={form.compare_price}
                 onChange={(e) => setForm({ ...form, compare_price: e.target.value })}
-                placeholder="0.00"
+                placeholder="0"
                 className={inputClass}
               />
             </Field>
