@@ -1,91 +1,114 @@
 import React, { useEffect, useState } from "react";
 import HeroSlider from "../Components/HeroSlider";
 import ProductSlider from "../Components/ProductSlider/ProductSlider";
+import { supabase } from "../lib/supabase";
 
-const categories = [
-  "smartphones",
-  "laptops",
-  "beauty",
-  "fragrances",
-  "mens-shirts",
-  "mens-shoes",
-  "skin-care",
-  "mens-watches",
-  "tablets",
-  "sports-accessories",
-  "mobile-accessories",
+// Display order for category sliders — matches the seed script category list.
+// Categories not in this list are appended alphabetically at the end.
+const CATEGORY_ORDER = [
+  "Smartphones",
+  "Laptops",
+  "Tablets",
+  "Gaming",
+  "Headphones",
+  "Smart Watches",
+  "Cameras",
+  "Furniture",
+  "Home Decor",
+  "Men's Fashion",
+  "Women's Fashion",
+  "Shoes",
+  "Beauty",
+  "Sports",
+  "Accessories",
 ];
 
 function Home() {
-  const [productsByCategory, setProductsByCategory] = useState({});
+  const [sections, setSections] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        // Fetch each category in parallel, then merge into one object:
-        // { smartphones: [...], laptops: [...], ... } so the UI can render sliders by key.
-        const results = await Promise.all(
-          categories.map(async (category) => {
-            const res = await fetch(
-              `https://dummyjson.com/products/category/${category}`,
-            );
-            const data = await res.json();
-            return { [category]: data.products };
-          }),
-        );
+    async function load() {
+      // Single query — fetch all active products with their category name.
+      // PostgREST returns categories as a nested object because of the FK.
+      const { data: products, error } = await supabase
+        .from("products")
+        .select("*, categories(id, name)")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
 
-        const combined = results.reduce(
-          (acc, curr) => ({ ...acc, ...curr }),
-          {},
-        );
-        setProductsByCategory(combined);
-
-        // ✅ Log the fetched data here
-      } catch (error) {
-        console.error("Error fetching products:", error);
+      if (error) {
+        console.error("[Home] fetch error:", error);
+        setLoading(false);
+        return;
       }
-    };
 
-    fetchProducts();
+      // Group products by their category name
+      const grouped = {};
+      for (const product of products || []) {
+        const catName = product.categories?.name || "Other";
+        if (!grouped[catName]) grouped[catName] = [];
+
+        // Normalize shape so Product.jsx card gets title and thumbnail
+        grouped[catName].push({
+          ...product,
+          title: product.name,
+          thumbnail: product.images?.[0] ?? null,
+        });
+      }
+
+      // Sort sections so they appear in the order defined in CATEGORY_ORDER.
+      // Categories not in the list are pushed to the end alphabetically.
+      const sectionList = Object.entries(grouped)
+        .map(([categoryName, prods]) => ({ categoryName, products: prods }))
+        .sort((a, b) => {
+          const ia = CATEGORY_ORDER.indexOf(a.categoryName);
+          const ib = CATEGORY_ORDER.indexOf(b.categoryName);
+          if (ia === -1 && ib === -1)
+            return a.categoryName.localeCompare(b.categoryName);
+          if (ia === -1) return 1;
+          if (ib === -1) return -1;
+          return ia - ib;
+        });
+
+      setSections(sectionList);
+      setLoading(false);
+    }
+
+    load();
   }, []);
+
+  if (loading) {
+    return (
+      <div>
+        <HeroSlider />
+        <div className="flex justify-center py-24">
+          <div className="w-7 h-7 border-[3px] border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
-      {/* slider under header */}
       <HeroSlider />
 
-      {/* showing a few categories */}
-      {productsByCategory["smartphones"] && (
-        <ProductSlider
-          catName="Mobile Phones"
-          products={productsByCategory["smartphones"]}
-        />
+      {sections.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <p className="text-xl font-semibold text-gray-700">No products yet</p>
+          <p className="text-sm text-gray-400 mt-2">
+            Run <code className="bg-gray-100 px-2 py-0.5 rounded text-xs">npm run seed</code> to populate the store.
+          </p>
+        </div>
+      ) : (
+        sections.map((section) => (
+          <ProductSlider
+            key={section.categoryName}
+            catName={section.categoryName}
+            products={section.products}
+          />
+        ))
       )}
-      {productsByCategory["laptops"] && (
-        <ProductSlider
-          catName="Laptops"
-          products={productsByCategory["laptops"]}
-        />
-      )}
-      {productsByCategory["mobile-accessories"] && (
-        <ProductSlider
-          catName="mobile-accessories"
-          products={productsByCategory["mobile-accessories"]}
-        />
-      )}
-      {productsByCategory["beauty"] && (
-        <ProductSlider
-          catName="Beauty"
-          products={productsByCategory["beauty"]}
-        />
-      )}
-      {productsByCategory["fragrances"] && (
-        <ProductSlider
-          catName="fragrances"
-          products={productsByCategory["fragrances"]}
-        />
-      )}
-      {/* Add more categories as needed */}
     </div>
   );
 }

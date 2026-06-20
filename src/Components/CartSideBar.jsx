@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import { CartContext } from "./Context/CartContext";
 import { Link } from "react-router-dom";
+import PriceDisplay from "./PriceDisplay";
+import { formatEGP } from "../lib/currency";
 
 function CartSideBar() {
   const {
@@ -69,12 +71,16 @@ function CartSideBar() {
                       {item.title}
                     </h3>
 
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      ${item.price} × {item.qty}
-                    </p>
+                    <div className="mt-1">
+                      <PriceDisplay
+                        price={item.price}
+                        comparePrice={item.compare_price}
+                        size="sm"
+                      />
+                    </div>
 
-                    <p className="text-primary font-bold text-lg mt-1">
-                      ${(item.price * item.qty).toFixed(2)}
+                    <p className="text-secondary text-xs mt-1">
+                      × {item.qty} = {formatEGP(item.price * item.qty)}
                     </p>
                   </div>
 
@@ -122,7 +128,7 @@ function CartSideBar() {
               Total
             </span>
             <span className="text-xl font-bold text-gray-900 dark:text-white">
-              ${cartTotal.toFixed(2)}
+              {formatEGP(cartTotal)}
             </span>
           </div>
 

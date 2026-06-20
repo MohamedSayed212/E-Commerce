@@ -54,6 +54,9 @@ export function CartProvider({ children }) {
     );
   };
 
+  // 🗑 CLEAR ENTIRE CART (called after a successful order)
+  const clearCart = () => setCartItems([]);
+
   // 🧮 CART COUNT
   const cartCount = cartItems.reduce((sum, item) => sum + item.qty, 0);
 
@@ -71,6 +74,7 @@ export function CartProvider({ children }) {
         removeFromCart,
         increaseQty,
         decreaseQty,
+        clearCart,
         cartCount,
         cartTotal,
         isCartOpen,

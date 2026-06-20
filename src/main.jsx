@@ -6,13 +6,17 @@ import { BrowserRouter } from "react-router-dom";
 import { CartProvider } from "./Components/Context/CartContext.jsx";
 import { FavouriteProvider } from "./Components/Context/FavouriteContext.jsx";
 import { AuthProvider } from "./Components/Context/AuthContext.jsx";
+import { AdminAuthProvider } from "./admin/AdminAuthContext.jsx";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
           <FavouriteProvider>
-            <App />
+            <AdminAuthProvider>
+              <App />
+            </AdminAuthProvider>
           </FavouriteProvider>
         </CartProvider>
       </AuthProvider>

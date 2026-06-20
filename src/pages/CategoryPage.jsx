@@ -1,39 +1,79 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 import Product from "../Components/ProductSlider/Product";
+
 function CategoryPage() {
-  // Route param name must be the same as App route: /category/:categoryName
-  const { categoryName } = useParams();
+  const { categoryName } = useParams(); // holds the Supabase category UUID
+
+  const [categoryLabel, setCategoryLabel] = useState("");
   const [products, setProducts] = useState([]);
-  // Header link uses encodeURIComponent, so decode it here before fetch.
-  const decodedCategoryName = decodeURIComponent(categoryName || "");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Guard: avoid fetching when param is missing.
-    if (!decodedCategoryName) return;
+    if (!categoryName) return;
 
-    fetch(`https://dummyjson.com/products/category/${decodedCategoryName}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data.products || []);
-      })
-      .catch(() => {
-        setProducts([]);
+    async function fetchData() {
+      setLoading(true);
+
+      // Fetch the category name for the page title
+      const { data: cat } = await supabase
+        .from("categories")
+        .select("name")
+        .eq("id", categoryName)
+        .single();
+
+      setCategoryLabel(cat?.name || "");
+
+      // Fetch all active products belonging to this category
+      const { data: prods } = await supabase
+        .from("products")
+        .select("*")
+        .eq("category_id", categoryName)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      console.log("[CategoryPage] raw products from Supabase:", prods);
+      prods?.forEach((p) => {
+        console.log(`  product "${p.name}" → images:`, p.images);
       });
-  }, [decodedCategoryName]);
+
+      // Normalize Supabase shape → shape that Product.jsx card expects
+      // (Product.jsx reads product.title and product.thumbnail)
+      setProducts(
+        (prods || []).map((p) => ({
+          ...p,
+          title: p.name,
+          thumbnail: p.images?.[0] ?? null,
+        }))
+      );
+
+      setLoading(false);
+    }
+
+    fetchData();
+  }, [categoryName]);
 
   return (
-    <div className="pt-[30px] !h-[350px] sm:container px-3">
-      <h1 className="mb-6 text-2xl font-bold capitalize text-gray-900 dark:text-white">
-        {decodedCategoryName}
+    <div className="pt-[30px] sm:container px-3 min-h-[400px]">
+      <h1 className="mb-6 text-2xl font-bold text-gray-900">
+        {categoryLabel}
       </h1>
 
-      {products.length === 0 ? (
-        <p className="text-gray-600 dark:text-gray-400">No products found</p>
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : products.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <p className="text-lg font-medium text-gray-700">No products found</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Products in this category will appear here once added from the dashboard.
+          </p>
+        </div>
       ) : (
-        <div className="grid gap-4 text-gray-900 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 dark:text-gray-100">
+        <div className="grid gap-4 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
           {products.map((item) => (
-            // Reuse existing product card component for same UI/behavior.
             <Product key={item.id} product={item} />
           ))}
         </div>

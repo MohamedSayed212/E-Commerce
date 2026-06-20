@@ -1,7 +1,7 @@
 import React from "react";
 
-function RatingField() {
-  return <div className="mt-[80px]"></div>;
-}
+const RatingField = () => {
+  return <div>RatingField</div>;
+};
 
 export default RatingField;

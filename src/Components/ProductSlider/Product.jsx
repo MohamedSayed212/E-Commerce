@@ -4,6 +4,7 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Buttons from "../Buttons";
 import { FavouriteContext } from "../Context/FavouriteContext";
+import PriceDisplay from "../PriceDisplay";
 
 function Product({ product }) {
   const { addToFavourites, favourites, removeFromFavourites } =
@@ -56,6 +57,10 @@ function Product({ product }) {
               className="h-full max-h-full w-full max-w-full object-contain transition duration-200 hover:scale-105"
               loading="lazy"
               draggable={false}
+              onError={(e) => {
+                console.warn("[Product] image failed to load:", image);
+                e.currentTarget.style.display = "none";
+              }}
             />
           )}
         </Link>
@@ -89,9 +94,13 @@ function Product({ product }) {
 
         {/* Price */}
         {typeof price === "number" && (
-          <p className="mb-4 text-[18px] font-bold leading-none text-blue-600">
-            ${price}
-          </p>
+          <div className="mb-4">
+            <PriceDisplay
+              price={price}
+              comparePrice={product.compare_price}
+              size="md"
+            />
+          </div>
         )}
 
         {/* Buttons */}

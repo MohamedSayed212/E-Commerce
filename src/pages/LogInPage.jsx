@@ -1,45 +1,44 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../Components/Context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 export default function LogInPage() {
-  const { login } = useContext(AuthContext);
+  const { user, loading, login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+
+  // If the user is already logged in, send them to the home page
+  if (!loading && user) {
+    return <Navigate to="/" replace />;
+  }
 
   const validate = () => {
     let newErrors = {};
-
     if (!form.email) newErrors.email = "Email is required";
     if (!form.password) newErrors.password = "Password is required";
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validate()) return;
 
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setSubmitting(true);
+    setErrors({});
 
-    if (
-      storedUser &&
-      storedUser.email === form.email &&
-      storedUser.password === form.password
-    ) {
-      login(storedUser);
+    try {
+      await login(form.email, form.password);
       navigate("/");
-    } else {
-      setErrors({ password: "Invalid email or password" });
+    } catch (err) {
+      // Supabase returns descriptive error messages like "Invalid login credentials"
+      setErrors({ password: err.message });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -70,6 +69,7 @@ export default function LogInPage() {
               type="email"
               placeholder="Enter your email"
               className={inputClass("email")}
+              value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
             {errors.email && (
@@ -84,6 +84,7 @@ export default function LogInPage() {
               type="password"
               placeholder="Enter your password"
               className={inputClass("password")}
+              value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />
             {errors.password && (
@@ -92,14 +93,18 @@ export default function LogInPage() {
           </div>
 
           {/* BUTTON */}
-          <button className="w-full bg-primary text-white py-2 rounded-lg hover:bg-primaryHover transition font-medium">
-            Sign In
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full bg-primary text-white py-2 rounded-lg hover:bg-primaryHover transition font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {submitting ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         {/* FOOTER */}
         <p className="text-sm text-center text-secondary mt-6">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link to="/signup" className="text-primary font-medium">
             Create account
           </Link>

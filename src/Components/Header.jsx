@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 import { FaSearch, FaHeart, FaShoppingCart } from "react-icons/fa";
@@ -6,8 +6,17 @@ import { IoMenu } from "react-icons/io5";
 import { HiArrowSmDown } from "react-icons/hi";
 import { PiSignInBold } from "react-icons/pi";
 import { FaUserPlus } from "react-icons/fa6";
+import {
+  RiDashboardLine,
+  RiUserLine,
+  RiShoppingBagLine,
+  RiHeartLine,
+  RiLogoutBoxLine,
+} from "react-icons/ri";
 import { CartContext } from "./Context/CartContext";
 import { FavouriteContext } from "./Context/FavouriteContext";
+import { AuthContext } from "./Context/AuthContext";
+import { supabase } from "../lib/supabase";
 
 function SearchResultsDropdown({ loading, results, onPick }) {
   return (
@@ -60,6 +69,8 @@ function Header() {
 
   // Get cart badge number and sidebar opener from context.
   const { cartCount, setIsCartOpen } = useContext(CartContext);
+  const { favouritesCount } = useContext(FavouriteContext);
+  const { user, logout } = useContext(AuthContext);
 
   const [categories, setCategories] = useState([]);
   const [categoryOpen, setCategoryOpen] = useState(false);
@@ -69,7 +80,10 @@ function Header() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-  const { favouritesCount } = useContext(FavouriteContext);
+
+  const [profile, setProfile] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const NavLinks = [
     { title: "Home", link: "/" },
 
@@ -79,12 +93,11 @@ function Header() {
   ];
 
   useEffect(() => {
-    fetch("https://dummyjson.com/products/categories")
-      .then((res) => res.json())
-      .then((data) =>
-        // API returns strings, wrap them into objects
-        setCategories(data),
-      );
+    supabase
+      .from("categories")
+      .select("id, name")
+      .order("name")
+      .then(({ data }) => setCategories(data || []));
   }, []);
 
   useEffect(() => {
@@ -135,12 +148,47 @@ function Header() {
     };
   }, [query]);
 
+  // Fetch profile from Supabase whenever the user logs in or out
+  useEffect(() => {
+    async function loadProfile() {
+      if (!user) {
+        setProfile(null);
+        return;
+      }
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+      setProfile(data ?? null);
+    }
+    loadProfile();
+  }, [user]);
+
+  // Close the dropdown when the user clicks anywhere outside it
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    setDropdownOpen(false);
+    setMenuOpen(false);
+    await logout();
+  };
+
+  // First letter of the user's name used inside the avatar circle
+  const avatarInitial = (profile?.full_name || user?.email || "?")[0].toUpperCase();
+
   const showSearchPanel = query.trim().length > 0;
 
-  const getCategorySlug = (cat) =>
-    typeof cat === "string" ? cat : cat?.slug || "";
-  const getCategoryLabel = (cat) =>
-    typeof cat === "string" ? cat : cat?.name || cat?.slug || "";
+  const getCategorySlug = (cat) => cat?.id || "";
+  const getCategoryLabel = (cat) => cat?.name || "";
 
   return (
     <header className="fixed left-0 top-0 z-50 w-full border-b border-transparent bg-white ">
@@ -312,21 +360,92 @@ function Header() {
                 </div>
 
                 {/* Auth Links */}
-                <div className="mt-[15px] flex gap-4">
-                  <Link
-                    to="/signin"
-                    className="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primaryHover duration-200 text-white text-center"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="flex-1 rounded-lg bg-gray-200 px-3 py-2 text-center text-gray-700 duration-200 hover:bg-gray-400 hover:text-white dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
+                <div className="mt-[15px]">
+                  {user ? (
+                    <div className="border-t border-gray-200 pt-3 dark:border-gray-700 space-y-1">
+                      {/* User info row */}
+                      <div className="flex items-center gap-3 px-3 py-2 mb-1">
+                        {profile?.avatar_url ? (
+                          <img
+                            src={profile.avatar_url}
+                            alt="avatar"
+                            className="w-9 h-9 rounded-full object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                            <span className="text-white text-sm font-semibold">
+                              {avatarInitial}
+                            </span>
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-gray-800 truncate dark:text-gray-100">
+                            {profile?.full_name || ""}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                        </div>
+                      </div>
+
+                      <Link
+                        to="/profile"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                      >
+                        <RiUserLine className="text-lg" />
+                        My Profile
+                      </Link>
+                      <Link
+                        to="/orders"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                      >
+                        <RiShoppingBagLine className="text-lg" />
+                        My Orders
+                      </Link>
+                      <Link
+                        to="/favourite"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                      >
+                        <RiHeartLine className="text-lg" />
+                        Wishlist
+                      </Link>
+                      {profile?.role === "admin" && (
+                        <Link
+                          to="/admin"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-gray-100 dark:hover:bg-gray-800"
+                        >
+                          <RiDashboardLine className="text-lg" />
+                          Dashboard
+                        </Link>
+                      )}
+                      <button
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+                      >
+                        <RiLogoutBoxLine className="text-lg" />
+                        Logout
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-4">
+                      <Link
+                        to="/signin"
+                        className="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primaryHover duration-200 text-white text-center"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        to="/signup"
+                        className="flex-1 rounded-lg bg-gray-200 px-3 py-2 text-center text-gray-700 duration-200 hover:bg-gray-400 hover:text-white dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -385,17 +504,99 @@ function Header() {
                 </nav>
 
                 {/* Right Icons */}
-                <div className="   flex gap-5  ">
-                  <Link to="/signin">
-                    <div className="rounded-md px-2 py-2 text-gray-600 duration-200 hover:bg-secondaryHover dark:text-gray-300 dark:hover:bg-gray-700">
-                      <PiSignInBold className="text-[25px]  " />
+                <div className="flex items-center gap-5">
+                  {user ? (
+                    <div className="relative" ref={dropdownRef}>
+                      {/* Trigger button — avatar + name + arrow */}
+                      <button
+                        onClick={() => setDropdownOpen((prev) => !prev)}
+                        className="flex items-center gap-2 rounded-lg px-2 py-1.5 duration-200 hover:bg-secondaryHover dark:hover:bg-gray-700"
+                      >
+                        {profile?.avatar_url ? (
+                          <img
+                            src={profile.avatar_url}
+                            alt="avatar"
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                            <span className="text-white text-sm font-semibold">
+                              {avatarInitial}
+                            </span>
+                          </div>
+                        )}
+                        <span className="max-w-[110px] truncate text-sm font-medium text-gray-700 dark:text-gray-200">
+                          {profile?.full_name || user.email}
+                        </span>
+                        <HiArrowSmDown
+                          className={`text-lg text-gray-600 transition dark:text-gray-300 ${
+                            dropdownOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+
+                      {/* Dropdown menu */}
+                      {dropdownOpen && (
+                        <div className="absolute right-0 top-[calc(100%+8px)] z-30 w-52 rounded-xl border border-gray-100 bg-white py-2 shadow-lg dark:border-gray-700 dark:bg-gray-900">
+                          <Link
+                            to="/profile"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
+                          >
+                            <RiUserLine className="text-lg" />
+                            My Profile
+                          </Link>
+                          <Link
+                            to="/orders"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
+                          >
+                            <RiShoppingBagLine className="text-lg" />
+                            My Orders
+                          </Link>
+                          <Link
+                            to="/favourite"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
+                          >
+                            <RiHeartLine className="text-lg" />
+                            Wishlist
+                          </Link>
+                          {profile?.role === "admin" && (
+                            <Link
+                              to="/admin"
+                              onClick={() => setDropdownOpen(false)}
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-primary transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                            >
+                              <RiDashboardLine className="text-lg" />
+                              Dashboard
+                            </Link>
+                          )}
+                          <hr className="my-1 border-gray-100 dark:border-gray-700" />
+                          <button
+                            onClick={handleLogout}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-500/10"
+                          >
+                            <RiLogoutBoxLine className="text-lg" />
+                            Logout
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  </Link>
-                  <Link to="/signup">
-                    <div className="rounded-md px-2 py-2 text-gray-600 duration-200 hover:bg-secondaryHover dark:text-gray-300 dark:hover:bg-gray-700">
-                      <FaUserPlus className="text-[25px] " />
-                    </div>
-                  </Link>
+                  ) : (
+                    <>
+                      <Link to="/signin">
+                        <div className="rounded-md px-2 py-2 text-gray-600 duration-200 hover:bg-secondaryHover dark:text-gray-300 dark:hover:bg-gray-700">
+                          <PiSignInBold className="text-[25px]" />
+                        </div>
+                      </Link>
+                      <Link to="/signup">
+                        <div className="rounded-md px-2 py-2 text-gray-600 duration-200 hover:bg-secondaryHover dark:text-gray-300 dark:hover:bg-gray-700">
+                          <FaUserPlus className="text-[25px]" />
+                        </div>
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

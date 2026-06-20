@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { CartContext } from "./Context/CartContext";
 import { Link } from "react-router-dom";
+import PriceDisplay from "./PriceDisplay";
+import { formatEGP } from "../lib/currency";
 
 function CartPage() {
   const { cartItems, removeFromCart, increaseQty, decreaseQty, cartTotal } =
@@ -37,12 +39,14 @@ function CartPage() {
                 />
 
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 md:text-xl">
+                  <h2 className="text-lg font-semibold text-gray-900 md:text-xl">
                     {item.title}
                   </h2>
-                  <p className="text-primary font-bold text-lg">
-                    ${item.price}
-                  </p>
+                  <PriceDisplay
+                    price={item.price}
+                    comparePrice={item.compare_price}
+                    size="md"
+                  />
                 </div>
               </div>
 
@@ -90,7 +94,7 @@ function CartPage() {
 
           <div className="mb-6 flex justify-between text-xl font-bold text-gray-900 dark:text-gray-100">
             <span>Total</span>
-            <span className="text-primary">${cartTotal.toFixed(2)}</span>
+            <span className="text-primary">{formatEGP(cartTotal)}</span>
           </div>
 
           <Link to="/checkout">

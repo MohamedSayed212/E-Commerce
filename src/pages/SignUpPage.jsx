@@ -1,9 +1,10 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../Components/Context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 export default function SignUp() {
-  const { register } = useContext(AuthContext);
+  const { user, loading, register } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -14,8 +15,13 @@ export default function SignUp() {
   });
 
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
-  // validation
+  // If the user is already logged in, send them to the home page
+  if (!loading && user) {
+    return <Navigate to="/" replace />;
+  }
+
   const validate = () => {
     let newErrors = {};
 
@@ -24,10 +30,8 @@ export default function SignUp() {
     if (!form.password) newErrors.password = "Password is required";
     if (form.password.length < 6)
       newErrors.password = "Password must be at least 6 characters";
-
     if (!form.confirmPassword)
       newErrors.confirmPassword = "Confirm your password";
-
     if (form.password !== form.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
 
@@ -35,23 +39,22 @@ export default function SignUp() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validate()) return;
 
-    // 💾 save to localStorage
-    const userData = {
-      name: form.name,
-      email: form.email,
-      password: form.password,
-    };
+    setSubmitting(true);
+    setErrors({});
 
-    localStorage.setItem("user", JSON.stringify(userData));
-
-    register(userData);
-
-    navigate("/");
+    try {
+      await register(form.email, form.password, form.name);
+      navigate("/");
+    } catch (err) {
+      // Supabase returns messages like "User already registered"
+      setErrors({ email: err.message });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputClass = (field) =>
@@ -65,10 +68,13 @@ export default function SignUp() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-secondary/10 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        {/* TITLE */}
-        <h2 className="text-3xl font-bold text-center text-secondary mb-6">
-          Create Account
-        </h2>
+        {/* BRAND */}
+        <div className="flex flex-col items-center mb-6">
+          <img src={logo} alt="logo" className="h-14 mb-2" />
+          <h2 className="text-3xl font-bold text-center text-secondary">
+            Create Account
+          </h2>
+        </div>
 
         {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -81,6 +87,7 @@ export default function SignUp() {
               type="text"
               placeholder="Enter your name"
               className={inputClass("name")}
+              value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
             {errors.name && (
@@ -95,6 +102,7 @@ export default function SignUp() {
               type="email"
               placeholder="Enter your email"
               className={inputClass("email")}
+              value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
             {errors.email && (
@@ -111,6 +119,7 @@ export default function SignUp() {
               type="password"
               placeholder="Create a password"
               className={inputClass("password")}
+              value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />
             {errors.password && (
@@ -127,6 +136,7 @@ export default function SignUp() {
               type="password"
               placeholder="Confirm your password"
               className={inputClass("confirmPassword")}
+              value={form.confirmPassword}
               onChange={(e) =>
                 setForm({ ...form, confirmPassword: e.target.value })
               }
@@ -141,9 +151,10 @@ export default function SignUp() {
           {/* BUTTON */}
           <button
             type="submit"
-            className="w-full bg-primary text-white py-2 rounded-lg hover:bg-primaryHover transition font-medium"
+            disabled={submitting}
+            className="w-full bg-primary text-white py-2 rounded-lg hover:bg-primaryHover transition font-medium disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Sign Up
+            {submitting ? "Creating account..." : "Sign Up"}
           </button>
         </form>
 
