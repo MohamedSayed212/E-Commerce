@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
@@ -7,8 +7,19 @@ import { useAdminAuth } from "../AdminAuthContext";
 export default function AdminLayout() {
   const { admin, loading } = useAdminAuth();
 
-  // Controls the mobile sidebar drawer (open/closed)
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  /*
+    Lock body scroll while the mobile sidebar is open so the background
+    page cannot be scrolled (horizontally or vertically) behind the overlay.
+    Cleanup runs on unmount and every time sidebarOpen changes.
+  */
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [sidebarOpen]);
 
   if (loading) {
     return (
@@ -23,21 +34,32 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="flex bg-gray-50 dark:bg-gray-950 min-h-screen">
+    /*
+      Root is a plain BLOCK container (not flex).
+      Reasons:
+        • flex containers can cause min-width:auto bugs where a flex child
+          refuses to shrink below its content, making the page wider than
+          the viewport even when the sidebar is position:fixed (out of flow).
+        • A block root + overflow-x:hidden is the simplest, most
+          browser-compatible way to guarantee no horizontal scroll.
+    */
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 overflow-x-hidden">
+
+      {/* Fixed sidebar — overlays content on mobile, always visible on lg+ */}
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
 
       {/*
-        lg:ml-60 — on large screens the sidebar is always visible so we
-        push content to the right. On mobile the sidebar is a drawer overlay
-        so we don't push the content at all.
-        min-w-0 is required: without it flex children default to
-        min-width:auto and the content div refuses to shrink below the
-        natural width of any inner table, causing page-level horizontal scroll.
+        Content wrapper.
+        - Block element → takes 100 % of the root width by default (no flex quirks).
+        - lg:pl-60  → on desktop, indent 240 px from the left to clear the
+          fixed sidebar. On mobile there is no indent; the sidebar overlays.
+        - overflow-x:hidden → second safety net so nothing inside can widen
+          this div beyond the viewport.
       */}
-      <div className="flex-1 min-w-0 lg:ml-60 flex flex-col min-h-screen overflow-x-hidden">
+      <div className="lg:pl-60 min-h-screen flex flex-col">
         <TopBar onMenuClick={() => setSidebarOpen((prev) => !prev)} />
         <main className="flex-1 p-4 md:p-6">
           <Outlet />

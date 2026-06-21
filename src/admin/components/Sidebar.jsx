@@ -48,9 +48,13 @@ export default function Sidebar({ isOpen, onClose }) {
         Dark backdrop — only visible on mobile when the drawer is open.
         Clicking it closes the sidebar.
       */}
+      {/*
+        Backdrop: z-30 so it sits above the sticky TopBar (z-10) and
+        covers the entire content area when the mobile drawer is open.
+      */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-10 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={onClose}
         />
       )}
@@ -61,10 +65,13 @@ export default function Sidebar({ isOpen, onClose }) {
         Mobile: starts off-screen to the left (-translate-x-full).
                 Slides in (translate-x-0) when isOpen is true.
         Desktop (lg+): always visible (lg:translate-x-0 overrides the mobile state).
+
+        z-40: above the backdrop (z-30) so the panel is always clickable.
+        max-w-[85vw]: safety cap for very narrow screens (<283 px).
       */}
       <aside
         className={`
-          fixed left-0 top-0 z-20 w-60 h-screen bg-gray-900 border-r border-gray-800
+          fixed left-0 top-0 z-40 w-60 max-w-[85vw] h-screen bg-gray-900 border-r border-gray-800
           flex flex-col transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
