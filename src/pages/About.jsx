@@ -27,7 +27,7 @@ function About() {
   // Dark mode: the header toggle adds class "dark" on <html>.
   // Any class here that starts with "dark:" only shows when dark mode is ON.
   return (
-    <main className="sm:container h-[800px] px-6 pb-14">
+    <main className="sm:container min-h-[400px] px-4 sm:px-6 pb-14">
       {/* Page heading section */}
       <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-900 dark:shadow-black/30 md:p-10">
         <p className="text-sm font-semibold uppercase tracking-wide text-primary">

@@ -25,9 +25,9 @@ function CartSideBar() {
         onClick={() => setIsCartOpen(false)}
       />
 
-      {/* Sidebar */}
+      {/* Sidebar — full width on very small screens, fixed width at sm+ */}
       <aside
-        className={`fixed right-0 top-0 xs:px-2 z-[80] flex h-full max-w-full flex-col bg-white shadow-2xl transition-transform duration-300 dark:bg-gray-900 dark:shadow-black/50 xs:w-[330px] md:w-[400px] ${
+        className={`fixed right-0 top-0 z-[80] flex h-full flex-col bg-white shadow-2xl transition-transform duration-300 dark:bg-gray-900 dark:shadow-black/50 w-full sm:w-[330px] md:w-[400px] ${
           isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -121,9 +121,9 @@ function CartSideBar() {
           )}
         </div>
 
-        {/* Footer */}
-        <div className="border-t h-[130px] border-gray-200 bg-white px-6 py-6 ">
-          <div className="mb-5 flex items-center justify-between">
+        {/* Footer — full-width button replaces the hardcoded ml-[60px] positioning hack */}
+        <div className="border-t border-gray-200 bg-white px-5 py-5">
+          <div className="mb-4 flex items-center justify-between">
             <span className="text-lg text-gray-600 dark:text-gray-400">
               Total
             </span>
@@ -132,8 +132,8 @@ function CartSideBar() {
             </span>
           </div>
 
-          <Link to="/cart" onClick={() => setIsCartOpen(false)}>
-            <button className=" xs:w-[150px]  md:w-[200px]   md:h-[50px] py-2 rounded-[10px]  xs:ml-[60px] sm:ml-[65px]  md:ml-[75px]  bg-primary hover:bg-primaryHover text-white text-lg font-semibold transition">
+          <Link to="/cart" onClick={() => setIsCartOpen(false)} className="block w-full">
+            <button className="w-full py-3 rounded-[10px] bg-primary hover:bg-primaryHover text-white text-lg font-semibold transition">
               View Cart
             </button>
           </Link>

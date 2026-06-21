@@ -9,12 +9,19 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+/* Prevent any element from causing horizontal page scroll on mobile */
+html {
+  overflow-x: hidden;
+}
+
 body {
   /* Light mode: calm neutral page (each component sets its own heading size/color) */
   background-color: #f8fafc;
   color: #0f172a;
   font-family: "Source Sans 3", sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; /* stops horizontal scroll on every page */
   transition:
     background-color 0.2s ease,
     color 0.2s ease;

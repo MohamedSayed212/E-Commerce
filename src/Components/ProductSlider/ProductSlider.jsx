@@ -10,8 +10,9 @@ import "swiper/css/navigation";
 function ProductSlider({ catName, products = [] }) {
   return (
     // container
-    <div className="w-full xs:mt-[25px] sm:mt-[50px] ">
-      <div className="w-full sm:container  ">
+    <div className="w-full xs:mt-[25px] sm:mt-[50px]">
+      {/* px-3 on mobile prevents the title and slider touching the screen edges */}
+      <div className="w-full px-3 sm:container">
         {/* Title */}
         <div className="mb-6">
           <h2 className="text-lg  font-semibold text-gray-900 dark:text-gray-100 sm:text-xl">

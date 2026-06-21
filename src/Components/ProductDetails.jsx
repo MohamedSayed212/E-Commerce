@@ -121,9 +121,10 @@ function ProductDetails() {
   return (
     <div className="p-6 sm:container xs:mt-[-40px] sm:mt-[-30px]">
       {/* Top Section */}
-      <div className="flex flex-col gap-7 rounded-2xl bg-white p-6 shadow-lg lg:flex-row">
+      <div className="flex flex-col gap-7 rounded-2xl bg-white p-4 sm:p-6 shadow-lg lg:flex-row">
         {/* Images Section */}
-        <div className="flex items-center xs:gap-5 sm:gap-[80px] justify-center rounded-xl bg-gray-100 p-6 xs:flex-col sm:flex-row-reverse">
+        {/* p-3 on mobile avoids triple-nested p-6 that consumed all width on 320-375 px screens */}
+        <div className="flex items-center xs:gap-4 sm:gap-[80px] justify-center rounded-xl bg-gray-100 p-3 sm:p-6 xs:flex-col sm:flex-row-reverse">
           {/* Main Image */}
           <div>
             {mainImage ? (
@@ -143,9 +144,9 @@ function ProductDetails() {
             )}
           </div>
 
-          {/* Thumbnails */}
+          {/* Thumbnails — column on all sizes so they never overflow in a row on small screens */}
           {images.length > 1 && (
-            <div className="flex sm:flex-col gap-4 md:mt-4">
+            <div className="flex flex-col gap-2 sm:gap-4 md:mt-4">
               {images.map((img, index) => (
                 <img
                   key={index}
@@ -193,7 +194,8 @@ function ProductDetails() {
             </div>
           )}
 
-          <div className="xs:mt-[-10px] mt-1 w-[300px]">
+          {/* w-full + max-w prevents fixed 300px from overflowing narrow screens */}
+          <div className="mt-1 w-full max-w-[300px]">
             <Buttons product={product} />
           </div>
         </div>

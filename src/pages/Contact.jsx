@@ -44,7 +44,7 @@ function Contact() {
   };
 
   return (
-    <main className="sm:container h-[800px] px-6 pb-14">
+    <main className="sm:container min-h-[400px] px-4 sm:px-6 pb-14">
       {/* Header text */}
       <section className="rounded-2xl bg-white p-6 shadow-sm  md:p-10">
         <p className="text-sm font-semibold uppercase tracking-wide text-primary">

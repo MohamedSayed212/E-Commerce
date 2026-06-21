@@ -314,7 +314,7 @@ function Header() {
               onClick={() => setMenuOpen(false)}
             >
               <div
-                className="fixed top-[60px]  left-0 flex h-[calc(100vh)] w-[300px] flex-col overflow-y-auto bg-white p-4 shadow-lg dark:bg-gray-900 dark:text-gray-100"
+                className="fixed top-[82px] left-0 flex h-[calc(100vh-82px)] w-[300px] flex-col overflow-y-auto bg-white p-4 shadow-lg dark:bg-gray-900 dark:text-gray-100"
                 onClick={(e) => e.stopPropagation()}
               >
                 {NavLinks.map((item, index) => (
