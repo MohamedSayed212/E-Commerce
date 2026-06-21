@@ -234,7 +234,7 @@ export default function ProductsPage() {
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-4 px-6 py-4 animate-pulse"
+                className="flex items-center gap-4 px-3 sm:px-6 py-4 animate-pulse"
               >
                 <div className="w-11 h-11 bg-gray-100 rounded-lg flex-shrink-0" />
                 <div className="flex-1 space-y-2">
@@ -281,19 +281,19 @@ export default function ProductsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 text-left">
-                    <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
                       Product
                     </th>
-                    <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden md:table-cell">
+                    <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden md:table-cell">
                       Category
                     </th>
-                    <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
                       Price
                     </th>
-                    <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden sm:table-cell">
                       Stock
                     </th>
-                    <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -305,7 +305,7 @@ export default function ProductsPage() {
                       className="border-b border-gray-100 hover:bg-secondaryHover transition duration-150 last:border-none"
                     >
                       {/* Product: thumbnail + name */}
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-4">
                         <div className="flex items-center gap-3">
                           {product.images?.[0] ? (
                             <img
@@ -339,7 +339,7 @@ export default function ProductsPage() {
                       </td>
 
                       {/* Category */}
-                      <td className="px-6 py-4 hidden md:table-cell">
+                      <td className="px-3 sm:px-6 py-4 hidden md:table-cell">
                         {product.categories?.name ? (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
                             {product.categories.name}
@@ -350,7 +350,7 @@ export default function ProductsPage() {
                       </td>
 
                       {/* Price */}
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-4">
                         <PriceDisplay
                           price={product.price}
                           comparePrice={product.compare_price}
@@ -359,12 +359,12 @@ export default function ProductsPage() {
                       </td>
 
                       {/* Stock */}
-                      <td className="px-6 py-4 hidden sm:table-cell">
+                      <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
                         <StockBadge stock={product.stock} />
                       </td>
 
                       {/* Actions */}
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-4">
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => handleEditClick(product)}
@@ -390,7 +390,7 @@ export default function ProductsPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-6 py-4 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 sm:px-6 py-4 border-t border-gray-200">
                 <p className="text-sm text-secondary">
                   Showing {(page - 1) * PAGE_SIZE + 1}–
                   {Math.min(page * PAGE_SIZE, totalCount)} of {totalCount}

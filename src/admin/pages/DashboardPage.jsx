@@ -151,11 +151,13 @@ export default function DashboardPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700 text-left">
-                  <th className="px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">Order</th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">Total</th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">Date</th>
+                  {/* px-3 sm:px-6 — tighter padding on mobile so columns fit the viewport */}
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">Order</th>
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">Customer</th>
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">Status</th>
+                  {/* Total and Date hidden on mobile — revealed at sm+ */}
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">Total</th>
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,11 +166,11 @@ export default function DashboardPage() {
                     key={order.id}
                     className="border-b border-gray-100 dark:border-gray-800 hover:bg-secondaryHover dark:hover:bg-gray-800 transition duration-200 last:border-none"
                   >
-                    <td className="px-6 py-4 font-mono text-xs text-secondary dark:text-gray-400">
+                    <td className="px-3 sm:px-6 py-4 font-mono text-xs text-secondary dark:text-gray-400">
                       #{order.id.slice(0, 8)}
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900 dark:text-gray-100">
+                    <td className="px-3 sm:px-6 py-4">
+                      <p className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-[120px] sm:max-w-none">
                         {order.profiles?.full_name || parseAddress(order.shipping_address).name || "Guest"}
                       </p>
                       {(() => {
@@ -187,13 +189,13 @@ export default function DashboardPage() {
                         ) : null;
                       })()}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-4">
                       <StatusBadge status={order.status} />
                     </td>
-                    <td className="px-6 py-4 font-bold text-primary">
+                    <td className="px-3 sm:px-6 py-4 font-bold text-primary hidden sm:table-cell">
                       {formatEGP(order.total)}
                     </td>
-                    <td className="px-6 py-4 text-secondary dark:text-gray-400">
+                    <td className="px-3 sm:px-6 py-4 text-secondary dark:text-gray-400 hidden md:table-cell">
                       {new Date(order.created_at).toLocaleDateString("en-GB")}
                     </td>
                   </tr>

@@ -136,7 +136,7 @@ export default function OrdersPage() {
         {loading ? (
           <div className="divide-y divide-gray-100">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center gap-4 px-6 py-4 animate-pulse">
+              <div key={i} className="flex items-center gap-4 px-3 sm:px-6 py-4 animate-pulse">
                 <div className="h-4 bg-gray-100 rounded w-24" />
                 <div className="flex-1 h-4 bg-gray-100 rounded w-40" />
                 <div className="h-4 bg-gray-100 rounded w-28 hidden sm:block" />
@@ -164,25 +164,25 @@ export default function OrdersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200 text-left">
-                  <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
                     Order
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
                     Customer
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden md:table-cell">
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden md:table-cell">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden sm:table-cell">
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden sm:table-cell">
                     Items
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
                     Total
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden lg:table-cell">
+                  <th className="px-3 sm:px-6 py-3 text-xs font-medium text-secondary uppercase tracking-wider hidden lg:table-cell">
                     Date
                   </th>
                 </tr>
@@ -201,37 +201,37 @@ export default function OrdersPage() {
                       className="border-b border-gray-100 hover:bg-secondaryHover transition duration-150 last:border-none cursor-pointer"
                     >
                       {/* Order ID */}
-                      <td className="px-6 py-4 font-mono text-xs text-secondary">
+                      <td className="px-3 sm:px-6 py-4 font-mono text-xs text-secondary">
                         #{order.id.slice(0, 8).toUpperCase()}
                       </td>
 
                       {/* Customer name */}
-                      <td className="px-6 py-4 font-medium text-gray-900">
+                      <td className="px-3 sm:px-6 py-4 font-medium text-gray-900">
                         {customerName}
                       </td>
 
                       {/* Email */}
-                      <td className="px-6 py-4 text-secondary hidden md:table-cell">
+                      <td className="px-3 sm:px-6 py-4 text-secondary hidden md:table-cell">
                         {addr.email || "—"}
                       </td>
 
                       {/* Item count */}
-                      <td className="px-6 py-4 text-secondary hidden sm:table-cell">
+                      <td className="px-3 sm:px-6 py-4 text-secondary hidden sm:table-cell">
                         {itemCount} item{itemCount !== 1 ? "s" : ""}
                       </td>
 
                       {/* Total */}
-                      <td className="px-6 py-4 font-bold text-primary">
+                      <td className="px-3 sm:px-6 py-4 font-bold text-primary">
                         {formatEGP(order.total)}
                       </td>
 
                       {/* Status */}
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-4">
                         <StatusBadge status={order.status} />
                       </td>
 
                       {/* Date */}
-                      <td className="px-6 py-4 text-secondary hidden lg:table-cell">
+                      <td className="px-3 sm:px-6 py-4 text-secondary hidden lg:table-cell">
                         {new Date(order.created_at).toLocaleDateString("en-GB")}
                       </td>
                     </tr>
